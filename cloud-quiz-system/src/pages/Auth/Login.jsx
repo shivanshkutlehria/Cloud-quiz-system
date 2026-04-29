@@ -10,6 +10,7 @@ import { auth, googleProvider, db } from "../../firebase/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { ToastContext } from "../../context/ToastContext";
+import "../../styles/login-split.css";
 
 // Demo accounts config
 const DEMO_ACCOUNTS = {
@@ -198,174 +199,164 @@ export default function Login() {
   ];
 
   return (
-    <div className="login-wrapper">
+    <div className="ls-root">
 
-      {/* ── Status Modal ── */}
+      {/* ════════════════════════════════════
+          FULLSCREEN BG VIDEO (behind everything)
+      ════════════════════════════════════ */}
+      <video className="ls-bg-video" autoPlay loop muted playsInline>
+        <source src="/login-bg.mp4" type="video/mp4" />
+      </video>
+      <div className="ls-bg-overlay" />
+
+      {/* ════════════════════════════════════
+          STATUS MODAL
+      ════════════════════════════════════ */}
       {statusModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
-          <div style={{ background: 'white', borderRadius: '24px', padding: '36px 32px', maxWidth: '420px', width: '100%', textAlign: 'center', boxShadow: '0 24px 64px rgba(0,0,0,0.2)' }}>
-
-            {statusModal.type === 'pending' && (
-              <>
-                <div style={{ fontSize: '56px', marginBottom: '16px' }}>⏳</div>
-                <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>Approval Pending</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.7', marginBottom: '8px' }}>
-                  Your <strong style={{ color: '#667eea' }}>{statusModal.role}</strong> account has been created and your email is verified.
-                </p>
-                <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.7', marginBottom: '24px' }}>
-                  An admin needs to approve your account before you can access the platform. Please check back later.
-                </p>
-                <div style={{ background: '#eff6ff', borderRadius: '12px', padding: '12px 16px', marginBottom: '24px', fontSize: '13px', color: '#1e40af' }}>
-                  📧 You'll be able to log in once an admin approves your request.
-                </div>
-                <button onClick={() => setStatusModal(null)}
-                  style={{ width: '100%', background: 'linear-gradient(135deg,#667eea,#764ba2)', borderRadius: '12px', padding: '13px', fontWeight: '700', fontSize: '15px', color: 'white', border: 'none', cursor: 'pointer' }}>
-                  OK, Got it
-                </button>
-              </>
-            )}
-
-            {statusModal.type === 'not_registered' && (
-              <>
-                <div style={{ fontSize: '56px', marginBottom: '16px' }}>🤔</div>
-                <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>Account Not Found</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.7', marginBottom: '24px' }}>
-                  No account found for <strong>{email}</strong>. Would you like to create a new account?
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <button onClick={() => { setStatusModal(null); navigate('/signup'); }}
-                    style={{ width: '100%', background: 'linear-gradient(135deg,#10b981,#059669)', borderRadius: '12px', padding: '13px', fontWeight: '700', fontSize: '15px', color: 'white', border: 'none', cursor: 'pointer' }}>
-                    ✨ Create Account
-                  </button>
-                  <button onClick={() => setStatusModal(null)}
-                    style={{ width: '100%', background: '#f1f5f9', borderRadius: '12px', padding: '12px', fontWeight: '600', fontSize: '14px', color: '#374151', border: 'none', cursor: 'pointer' }}>
-                    Try Again
-                  </button>
-                </div>
-              </>
-            )}
-
-            {statusModal.type === 'invalid' && (
-              <>
-                <div style={{ fontSize: '56px', marginBottom: '16px' }}>❌</div>
-                <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>Wrong Credentials</h3>
-                <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.7', marginBottom: '24px' }}>
-                  The email or password is incorrect. Double-check and try again, or reset your password.
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <button onClick={() => setStatusModal(null)}
-                    style={{ width: '100%', background: 'linear-gradient(135deg,#667eea,#764ba2)', borderRadius: '12px', padding: '13px', fontWeight: '700', fontSize: '15px', color: 'white', border: 'none', cursor: 'pointer' }}>
-                    Try Again
-                  </button>
-                  <button onClick={() => { setStatusModal(null); handleForgotPassword(); }}
-                    style={{ width: '100%', background: '#f1f5f9', borderRadius: '12px', padding: '12px', fontWeight: '600', fontSize: '14px', color: '#374151', border: 'none', cursor: 'pointer' }}>
-                    🔑 Reset Password
-                  </button>
-                  <button onClick={() => { setStatusModal(null); navigate('/signup'); }}
-                    style={{ background: 'transparent', color: '#94a3b8', border: 'none', cursor: 'pointer', fontSize: '13px', padding: '4px' }}>
-                    Don't have an account? Sign Up
-                  </button>
-                </div>
-              </>
-            )}
-
+        <div className="ls-modal-backdrop" onClick={() => setStatusModal(null)}>
+          <div className="ls-modal" onClick={e => e.stopPropagation()}>
+            {statusModal.type === 'pending' && (<>
+              <div className="ls-modal-icon">⏳</div>
+              <h3>Approval Pending</h3>
+              <p>Your <strong>{statusModal.role}</strong> account is awaiting admin approval. Check back soon.</p>
+              <button className="ls-modal-btn-primary" onClick={() => setStatusModal(null)}>Got it</button>
+            </>)}
+            {statusModal.type === 'not_registered' && (<>
+              <div className="ls-modal-icon">🤔</div>
+              <h3>Account Not Found</h3>
+              <p>No account for <strong>{email}</strong>. Want to create one?</p>
+              <button className="ls-modal-btn-primary" onClick={() => { setStatusModal(null); navigate('/signup'); }}>✨ Create Account</button>
+              <button className="ls-modal-btn-ghost" onClick={() => setStatusModal(null)}>Try Again</button>
+            </>)}
+            {statusModal.type === 'invalid' && (<>
+              <div className="ls-modal-icon">❌</div>
+              <h3>Wrong Credentials</h3>
+              <p>Email or password is incorrect. Try again or reset your password.</p>
+              <button className="ls-modal-btn-primary" onClick={() => setStatusModal(null)}>Try Again</button>
+              <button className="ls-modal-btn-ghost" onClick={() => { setStatusModal(null); handleForgotPassword(); }}>🔑 Reset Password</button>
+            </>)}
           </div>
         </div>
       )}
 
-      <div className="login-card">
-        <h2 className="login-title">Cloud Quiz System</h2>
+      {/* ════════════════════════════════════
+          SPLIT CARD
+      ════════════════════════════════════ */}
+      <div className="ls-card">
 
-        {/* Demo login section */}
-        <div style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          padding: '16px',
-          borderRadius: '12px',
-          marginBottom: '20px',
-          color: 'white',
-        }}>
-          <div style={{ fontSize: '13px', fontWeight: '600', marginBottom: '10px', opacity: 0.9 }}>
-            🎯 One-click demo login:
-          </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {DEMO_BUTTONS.map(({ role, label }) => (
-              <button
-                key={role}
-                type="button"
-                onClick={() => handleDemoLogin(role)}
-                disabled={demoLoading !== null}
-                style={{
-                  flex: '1',
-                  minWidth: '90px',
-                  padding: '10px 8px',
-                  background: demoLoading === role ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.2)',
-                  border: '1px solid rgba(255,255,255,0.35)',
-                  color: 'white',
-                  borderRadius: '8px',
-                  cursor: demoLoading !== null ? 'not-allowed' : 'pointer',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  transition: 'all 0.2s',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '2px',
-                }}
-              >
-                {demoLoading === role ? '⏳' : label}
-              </button>
-            ))}
-          </div>
-          <p style={{ fontSize: '11px', opacity: 0.75, margin: '10px 0 0', textAlign: 'center' }}>
-            Accounts are created automatically on first use
-          </p>
-        </div>
-
-        <form onSubmit={handleLogin} className="login-form">
-          {showResendVerify && (
-            <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '12px', padding: '12px 16px', marginBottom: '16px', fontSize: '13px', color: '#c2410c' }}>
-              <p style={{ margin: '0 0 8px', fontWeight: '600' }}>📧 Email not verified</p>
-              <p style={{ margin: '0 0 10px', color: '#9a3412' }}>Check your inbox for the verification link, or resend it.</p>
-              <button type="button" onClick={handleResendVerification}
-                style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)', color: 'white', borderRadius: '8px', padding: '7px 16px', fontSize: '12px', fontWeight: '700', border: 'none', cursor: 'pointer' }}>
-                🔄 Resend verification email
-              </button>
+        {/* ── LEFT PANEL — lock animation video ── */}
+        <div className="ls-left">
+          <video className="ls-lock-video" autoPlay loop muted playsInline>
+            <source src="/lock-animation.mp4" type="video/mp4" />
+          </video>
+          <div className="ls-left-content">
+            <div className="ls-brand">
+              <span className="ls-brand-icon">☁️</span>
+              <span className="ls-brand-name">Cloud Quiz</span>
             </div>
-          )}
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit" className="primary-btn">
-            Sign In
-          </button>
-        </form>
-
-        <div className="forgot-password">
-          <span onClick={handleForgotPassword}>Forgot Password?</span>
+            <h2 className="ls-left-title">Secure &amp; Smart<br />Learning Platform</h2>
+            <p className="ls-left-sub">Test your knowledge, track progress,<br />and grow every day.</p>
+          </div>
         </div>
 
-        <div className="divider">OR</div>
+        {/* ── RIGHT PANEL — login form ── */}
+        <div className="ls-right">
+          <div className="ls-form-wrap">
 
-        <button onClick={handleGoogleLogin} className="google-btn">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="google" />
-          Continue with Google
-        </button>
+            {/* Header */}
+            <div className="ls-form-header">
+              <h1 className="ls-form-title">Welcome Back 👋</h1>
+              <p className="ls-form-sub">Login to continue your Cloud Quiz journey</p>
+            </div>
 
-        <p className="signup-link">
-          Don't have an account?
-          <span onClick={() => navigate("/signup")}> Sign Up</span>
-        </p>
+            {/* Demo buttons */}
+            <div className="ls-demo-box">
+              <p className="ls-demo-label">⚡ One-click demo login</p>
+              <div className="ls-demo-btns">
+                {DEMO_BUTTONS.map(({ role, label }) => (
+                  <button
+                    key={role}
+                    type="button"
+                    className={`ls-demo-btn${demoLoading === role ? ' ls-demo-btn--loading' : ''}`}
+                    onClick={() => handleDemoLogin(role)}
+                    disabled={demoLoading !== null}
+                  >
+                    {demoLoading === role ? <span className="ls-spinner" /> : label}
+                  </button>
+                ))}
+              </div>
+              <p className="ls-demo-note">Accounts created automatically on first use</p>
+            </div>
+
+            {/* Divider */}
+            <div className="ls-divider"><span>or sign in manually</span></div>
+
+            {/* Email not verified banner */}
+            {showResendVerify && (
+              <div className="ls-warn-banner">
+                <p>📧 <strong>Email not verified.</strong> Check your inbox.</p>
+                <button type="button" onClick={handleResendVerification} className="ls-warn-btn">
+                  🔄 Resend email
+                </button>
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleLogin} className="ls-form" noValidate>
+              <div className="ls-field">
+                <span className="ls-field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </span>
+                <input
+                  type="email"
+                  placeholder="Email address"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  className="ls-input"
+                />
+              </div>
+              <div className="ls-field">
+                <span className="ls-field-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </span>
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="ls-input"
+                />
+              </div>
+
+              <div className="ls-forgot-row">
+                <button type="button" className="ls-forgot" onClick={handleForgotPassword}>
+                  Forgot password?
+                </button>
+              </div>
+
+              <button type="submit" className="ls-submit-btn">
+                Sign In →
+              </button>
+            </form>
+
+            {/* Google */}
+            <button onClick={handleGoogleLogin} className="ls-google-btn">
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="18" height="18" />
+              Continue with Google
+            </button>
+
+            {/* Switch to signup */}
+            <p className="ls-switch">
+              Don't have an account?{' '}
+              <span onClick={() => navigate('/signup')} className="ls-switch-link">Sign Up</span>
+            </p>
+
+          </div>
+        </div>
       </div>
     </div>
   );

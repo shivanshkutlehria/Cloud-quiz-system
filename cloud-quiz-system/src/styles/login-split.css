@@ -1,0 +1,769 @@
+﻿/* ============================================================
+   CLOUD QUIZ — SPLIT LOGIN PAGE
+   login-split.css
+============================================================ */
+
+/* ── Reset for this page ── */
+.ls-root *, .ls-root *::before, .ls-root *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Root: fullscreen, centers the card ── */
+.ls-root {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  animation: ls-pageFade 0.5s ease both;
+}
+
+@keyframes ls-pageFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Fullscreen background video ── */
+.ls-bg-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* ── Dark overlay on top of bg video ── */
+.ls-bg-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 6, 20, 0.72);
+  z-index: 1;
+}
+
+/* ════════════════════════════════════
+   SPLIT CARD
+════════════════════════════════════ */
+.ls-card {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  width: 100%;
+  max-width: 960px;
+  min-height: 600px;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 40px 100px rgba(0,0,0,0.6),
+    0 0 80px rgba(102,126,234,0.15);
+  animation: ls-cardUp 0.55s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes ls-cardUp {
+  from { opacity: 0; transform: translateY(32px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+/* ════════════════════════════════════
+   LEFT PANEL — lock animation video
+════════════════════════════════════ */
+.ls-left {
+  position: relative;
+  flex: 1.1;
+  min-width: 0;
+  overflow: hidden;
+  background: linear-gradient(145deg, #0f0c29, #302b63, #24243e);
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Lock animation video fills the left panel */
+.ls-lock-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.85;
+}
+
+/* Gradient fade at bottom so text is readable */
+.ls-left::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 30%,
+    rgba(6, 6, 20, 0.85) 100%
+  );
+  z-index: 1;
+}
+
+/* Content sits above the video */
+.ls-left-content {
+  position: relative;
+  z-index: 2;
+  padding: 36px 36px 40px;
+  width: 100%;
+}
+
+.ls-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ls-brand-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 0 12px rgba(167,139,250,0.8));
+  animation: ls-float 3s ease-in-out infinite;
+}
+
+@keyframes ls-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+.ls-brand-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.3px;
+}
+
+.ls-left-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: white;
+  line-height: 1.25;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.ls-left-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+/* Stats row */
+.ls-left-stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.ls-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 20px 0 0;
+}
+
+.ls-stat:first-child { padding-left: 0; }
+
+.ls-stat-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+}
+
+.ls-stat-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ls-stat-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255,255,255,0.15);
+  margin: 0 20px 0 0;
+}
+
+/* ════════════════════════════════════
+   RIGHT PANEL — login form
+════════════════════════════════════ */
+.ls-right {
+  flex: 1;
+  min-width: 0;
+  background: #0f1117;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 36px;
+  overflow-y: auto;
+}
+
+.ls-form-wrap {
+  width: 100%;
+  max-width: 360px;
+  animation: ls-formSlide 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s both;
+}
+
+@keyframes ls-formSlide {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Form header */
+.ls-form-header {
+  margin-bottom: 24px;
+}
+
+.ls-form-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #f1f5f9;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.ls-form-sub {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* ── Demo box ── */
+.ls-demo-box {
+  background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15));
+  border: 1px solid rgba(102,126,234,0.3);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.ls-demo-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #a78bfa;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ls-demo-btns {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ls-demo-btn {
+  flex: 1;
+  padding: 9px 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #e2e8f0;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 38px;
+}
+
+.ls-demo-btn:hover:not(:disabled) {
+  background: rgba(102,126,234,0.25);
+  border-color: rgba(102,126,234,0.5);
+  transform: translateY(-1px);
+}
+
+.ls-demo-btn--loading {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ls-demo-note {
+  font-size: 11px;
+  color: #475569;
+  text-align: center;
+}
+
+/* ── Divider ── */
+.ls-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ls-divider::before,
+.ls-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #1e293b;
+}
+
+/* ── Warning banner ── */
+.ls-warn-banner {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #fbbf24;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ls-warn-btn {
+  background: rgba(245,158,11,0.2);
+  border: 1px solid rgba(245,158,11,0.4);
+  color: #fbbf24;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+  transition: all 0.15s;
+}
+
+.ls-warn-btn:hover {
+  background: rgba(245,158,11,0.3);
+}
+
+/* ── Form ── */
+.ls-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* Input field with icon */
+.ls-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ls-field-icon {
+  position: absolute;
+  left: 16px;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+.ls-field-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.ls-input {
+  width: 100%;
+  padding: 13px 16px 13px 48px;
+  background: #1a1f2e;
+  border: 1.5px solid #1e293b;
+  border-radius: 12px;
+  color: #f1f5f9;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.ls-input::placeholder {
+  color: #475569;
+}
+
+.ls-input:focus {
+  border-color: #667eea;
+  background: #1e2438;
+  box-shadow: 0 0 0 3px rgba(102,126,234,0.18);
+}
+
+/* Forgot password */
+.ls-forgot-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -4px;
+}
+
+.ls-forgot {
+  background: transparent;
+  border: none;
+  color: #667eea;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+  text-decoration: none;
+  position: relative;
+}
+
+.ls-forgot::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #667eea;
+  transition: width 0.2s ease;
+}
+
+.ls-forgot:hover::after { width: 100%; }
+.ls-forgot:hover { color: #a78bfa; }
+
+/* Submit button */
+.ls-submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.2px;
+  box-shadow: 0 4px 20px rgba(102,126,234,0.35);
+}
+
+.ls-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(102,126,234,0.5);
+}
+
+.ls-submit-btn:active {
+  transform: translateY(0);
+}
+
+/* Google button */
+.ls-google-btn {
+  width: 100%;
+  padding: 13px;
+  background: #1a1f2e;
+  border: 1.5px solid #1e293b;
+  border-radius: 12px;
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+  font-family: inherit;
+}
+
+.ls-google-btn:hover {
+  background: #1e2438;
+  border-color: #334155;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* Switch link */
+.ls-switch {
+  text-align: center;
+  font-size: 14px;
+  color: #475569;
+}
+
+.ls-switch-link {
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s;
+  margin-left: 4px;
+}
+
+.ls-switch-link:hover { color: #a78bfa; }
+
+/* ── Spinner ── */
+.ls-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: ls-spin 0.7s linear infinite;
+}
+
+@keyframes ls-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ════════════════════════════════════
+   MODAL
+════════════════════════════════════ */
+.ls-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  animation: ls-pageFade 0.2s ease;
+}
+
+.ls-modal {
+  background: #0f1117;
+  border: 1px solid #1e293b;
+  border-radius: 24px;
+  padding: 36px 32px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  animation: ls-cardUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ls-modal-icon {
+  font-size: 52px;
+  line-height: 1;
+}
+
+.ls-modal h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.ls-modal p {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.ls-modal p strong {
+  color: #a78bfa;
+}
+
+.ls-modal-btn-primary {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.ls-modal-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(102,126,234,0.4);
+}
+
+.ls-modal-btn-ghost {
+  width: 100%;
+  padding: 12px;
+  background: #1a1f2e;
+  border: 1px solid #1e293b;
+  color: #94a3b8;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.ls-modal-btn-ghost:hover {
+  background: #1e2438;
+  color: #cbd5e1;
+}
+
+/* ════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════ */
+@media (max-width: 768px) {
+  .ls-root {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .ls-card {
+    flex-direction: column;
+    border-radius: 0;
+    min-height: 100vh;
+    box-shadow: none;
+  }
+
+  /* On mobile: left panel becomes a compact header strip */
+  .ls-left {
+    flex: none;
+    height: 220px;
+  }
+
+  .ls-left-content {
+    padding: 20px 24px 24px;
+  }
+
+  .ls-left-title {
+    font-size: 20px;
+  }
+
+  .ls-left-sub {
+    display: none;
+  }
+
+  .ls-right {
+    flex: 1;
+    padding: 28px 24px 40px;
+  }
+
+  .ls-form-wrap {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .ls-demo-btns {
+    flex-wrap: wrap;
+  }
+
+  .ls-demo-btn {
+    min-width: calc(50% - 4px);
+  }
+}
+
+/* ════════════════════════════════════
+   SIGNUP — ROLE SELECTOR
+════════════════════════════════════ */
+.ls-role-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.ls-role-btn {
+  padding: 12px 10px;
+  background: #1a1f2e;
+  border: 1.5px solid #1e293b;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: inherit;
+}
+
+.ls-role-btn:hover {
+  background: #1e2438;
+  border-color: #334155;
+  transform: translateY(-1px);
+}
+
+.ls-role-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e2e8f0;
+  display: block;
+}
+
+.ls-role-desc {
+  font-size: 11px;
+  color: #475569;
+  display: block;
+  line-height: 1.4;
+}
+
+/* ════════════════════════════════════
+   SIGNUP — PASSWORD STRENGTH
+════════════════════════════════════ */
+.ls-pw-strength {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: -4px;
+}
+
+.ls-pw-bars {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.ls-pw-bar {
+  flex: 1;
+  height: 3px;
+  border-radius: 99px;
+  transition: background 0.25s ease;
+}
+
+/* ════════════════════════════════════
+   SIGNUP — VERIFY STEPS
+════════════════════════════════════ */
+.ls-verify-steps {
+  background: #1a1f2e;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+}
+
+.ls-verify-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.ls-verify-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

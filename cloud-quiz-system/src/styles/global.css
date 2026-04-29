@@ -176,7 +176,7 @@ form {
   padding: 6px 12px;
   width: auto;
 }
-/* ================= LOGIN PAGE ================= */
+/* ================= VIDEO BG LOGIN ================= */
 .login-wrapper {
   min-height: 100vh;
   display: flex;
@@ -184,6 +184,37 @@ form {
   align-items: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px;
+}
+
+/* Glass card input placeholder color */
+.login-card input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Glass card input focus glow */
+.login-card input:focus {
+  border-color: rgba(167, 139, 250, 0.7) !important;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2) !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Glass divider lines */
+.login-card .divider::before,
+.login-card .divider::after {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Google btn hover on glass */
+.login-card .google-btn:hover {
+  background: rgba(255, 255, 255, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+/* Forgot password hover */
+.login-card .forgot-password span:hover {
+  color: #a78bfa;
+  text-decoration: underline;
 }
 
 .login-card {
