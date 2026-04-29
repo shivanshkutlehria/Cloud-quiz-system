@@ -8,6 +8,7 @@ import { SkeletonQuizGrid, SkeletonDashboard } from "../../components/Loading";
 import StudyGroups from "./StudyGroups";
 import AskTeacher from "./AskTeacher";
 import Goals from "./Goals";
+import StudentHome from "./StudentHome";
 
 const SUBJECT_GRADIENTS = [
   'linear-gradient(135deg,#667eea,#764ba2)',
@@ -130,114 +131,16 @@ export default function StudentDashboard() {
         {/* ══════════════ HOME ══════════════ */}
         {activeTab === 'home' && (
           <div className="tab-content">
-            {/* Welcome banner */}
-            <div style={{ background: 'linear-gradient(135deg,#667eea,#764ba2)', borderRadius: '20px', padding: '28px 32px', color: 'white', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-              <div>
-                <h3 style={{ color: 'white', fontSize: '22px', fontWeight: '800', marginBottom: '6px' }}>Welcome back! 🎓</h3>
-                <p style={{ opacity: 0.85, margin: 0, fontSize: '14px' }}>{currentUser?.email}</p>
-                {pendingQuizzes.length > 0 && (
-                  <div style={{ marginTop: '12px', background: 'rgba(255,255,255,0.2)', borderRadius: '10px', padding: '8px 14px', fontSize: '13px', fontWeight: '600', display: 'inline-block' }}>
-                    🔔 {pendingQuizzes.length} pending test{pendingQuizzes.length > 1 ? 's' : ''} waiting
-                  </div>
-                )}
-              </div>
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                <button onClick={() => setActiveTab('tests')} style={{ background: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.4)', color: 'white', borderRadius: '10px', padding: '10px 18px', fontWeight: '700', fontSize: '13px' }}>
-                  📝 Go to Tests
-                </button>
-                <button onClick={() => setActiveTab('subjects')} style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', borderRadius: '10px', padding: '10px 18px', fontWeight: '600', fontSize: '13px' }}>
-                  📚 My Subjects
-                </button>
-              </div>
-            </div>
-
-            {/* Stats row */}
-            {loading ? (
-              <SkeletonDashboard />
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: '14px', marginBottom: '28px' }}>
-                <StatCard icon="📝" label="Quizzes Taken"   value={stats?.totalQuizzes || 0}  color="#667eea" />
-                <StatCard icon="📊" label="Avg Score"       value={stats ? `${stats.avgScore}%` : '—'} color="#10b981" />
-                <StatCard icon="🏆" label="Best Score"      value={stats ? `${stats.bestScore}%` : '—'} color="#f59e0b" />
-                <StatCard icon="✅" label="Pass Rate"       value={stats ? `${stats.passRate}%` : '—'} color="#3b82f6" />
-                <StatCard icon="🔔" label="Pending Tests"   value={pendingQuizzes.length}      color="#ef4444" sub={pendingQuizzes.length > 0 ? 'Need attention' : 'All done!'} />
-                <StatCard icon="📚" label="Subjects"        value={subjects.length}            color="#764ba2" />
-              </div>
-            )}
-
-            {/* Pending tests alert */}
-            {!loading && pendingQuizzes.length > 0 && (
-              <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '16px', padding: '18px 22px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                <div>
-                  <p style={{ fontWeight: '700', color: '#c2410c', margin: '0 0 4px' }}>🔔 You have {pendingQuizzes.length} pending test{pendingQuizzes.length > 1 ? 's' : ''}</p>
-                  <p style={{ color: '#9a3412', fontSize: '13px', margin: 0 }}>{pendingQuizzes.slice(0, 2).map(q => q.title).join(', ')}{pendingQuizzes.length > 2 ? ` +${pendingQuizzes.length - 2} more` : ''}</p>
-                </div>
-                <button onClick={() => setActiveTab('tests')} style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)', borderRadius: '10px', padding: '10px 20px', fontWeight: '700', fontSize: '13px', whiteSpace: 'nowrap' }}>
-                  Start Now →
-                </button>
-              </div>
-            )}
-
-            {/* Subjects quick access */}
-            {!loading && subjects.length > 0 && (
-              <div style={{ marginBottom: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>📚 My Subjects</h3>
-                  <button onClick={() => setActiveTab('subjects')} style={{ background: 'transparent', color: '#667eea', fontSize: '13px', fontWeight: '600', padding: '4px 0', border: 'none', cursor: 'pointer' }}>View all →</button>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: '12px' }}>
-                  {subjects.slice(0, 4).map(s => (
-                    <div key={s.id} onClick={() => navigate(`/subject/${s.id}`)}
-                      style={{ background: SUBJECT_GRADIENTS[s.colorIndex % SUBJECT_GRADIENTS.length], borderRadius: '14px', padding: '18px', cursor: 'pointer', color: 'white', transition: 'transform 0.15s ease' }}
-                      onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}
-                      onMouseLeave={e => e.currentTarget.style.transform = 'none'}
-                    >
-                      <div style={{ fontSize: '24px', marginBottom: '8px' }}>📚</div>
-                      <div style={{ fontWeight: '700', fontSize: '14px' }}>{s.name}</div>
-                      {s.description && <div style={{ fontSize: '12px', opacity: 0.8, marginTop: '4px' }}>{s.description}</div>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Recent attempts */}
-            {!loading && myAttempts.length > 0 && (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>🕐 Recent Activity</h3>
-                  <button onClick={() => setActiveTab('analytics')} style={{ background: 'transparent', color: '#667eea', fontSize: '13px', fontWeight: '600', padding: '4px 0', border: 'none', cursor: 'pointer' }}>View analytics →</button>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {myAttempts.sort((a, b) => b.submittedAt - a.submittedAt).slice(0, 4).map(attempt => {
-                    const pct  = Math.round((attempt.score / attempt.total) * 100);
-                    const quiz = quizzes.find(q => q.id === attempt.quizId);
-                    return (
-                      <div key={attempt.id} style={{ background: 'white', borderRadius: '12px', padding: '14px 18px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                        <div>
-                          <div style={{ fontWeight: '600', fontSize: '14px', color: '#0f172a' }}>{quiz?.title || 'Quiz'}</div>
-                          <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px' }}>{new Date(attempt.submittedAt).toLocaleDateString()}</div>
-                        </div>
-                        <span style={{ padding: '4px 12px', borderRadius: '20px', fontSize: '13px', fontWeight: '700', background: pct >= 50 ? '#dcfce7' : '#fee2e2', color: pct >= 50 ? '#15803d' : '#dc2626' }}>
-                          {attempt.score}/{attempt.total} ({pct}%)
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {!loading && myAttempts.length === 0 && (
-              <div style={{ textAlign: 'center', padding: '48px 20px', background: 'white', borderRadius: '20px', border: '2px dashed #e2e8f0' }}>
-                <div style={{ fontSize: '48px', marginBottom: '12px' }}>🚀</div>
-                <h3 style={{ color: '#374151', marginBottom: '8px' }}>Ready to start learning?</h3>
-                <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '20px' }}>Take your first quiz or explore your subjects</p>
-                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <button onClick={() => setActiveTab('tests')} style={{ background: 'linear-gradient(135deg,#667eea,#764ba2)', borderRadius: '10px', padding: '10px 22px', fontWeight: '700' }}>📝 Take a Test</button>
-                  <button onClick={() => setActiveTab('subjects')} style={{ background: 'linear-gradient(135deg,#10b981,#059669)', borderRadius: '10px', padding: '10px 22px', fontWeight: '700' }}>📚 Browse Subjects</button>
-                </div>
-              </div>
+            {loading ? <SkeletonDashboard /> : (
+              <StudentHome
+                stats={stats}
+                myAttempts={myAttempts}
+                quizzes={quizzes}
+                subjects={subjects}
+                pendingQuizzes={pendingQuizzes}
+                currentUser={currentUser}
+                setActiveTab={setActiveTab}
+              />
             )}
           </div>
         )}
