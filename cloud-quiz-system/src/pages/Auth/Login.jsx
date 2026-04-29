@@ -3,6 +3,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   sendPasswordResetEmail,
+  sendEmailVerification,
   createUserWithEmailAndPassword
 } from "firebase/auth";
 import { auth, googleProvider, db } from "../../firebase/firebase";
@@ -20,7 +21,9 @@ const DEMO_ACCOUNTS = {
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [demoLoading, setDemoLoading] = useState(null); // which demo button is loading
+  const [demoLoading, setDemoLoading] = useState(null);
+  const [showResendVerify, setShowResendVerify] = useState(false);
+  const [statusModal, setStatusModal] = useState(null); // { type: 'pending'|'not_registered', role?, name? }
   const navigate = useNavigate();
   const { success, error, info, warning } = useContext(ToastContext);
 
@@ -36,9 +39,47 @@ export default function Login() {
     e.preventDefault();
     try {
       const userCred = await signInWithEmailAndPassword(auth, email, password);
-      redirectByRole(userCred.user.uid);
+
+      // Block login if email not verified
+      if (!userCred.user.emailVerified) {
+        await auth.signOut();
+        setShowResendVerify(true);
+        warning('Please verify your email first. Check your inbox for the verification link.', 5000);
+        return;
+      }
+
+      // Check Firestore for approval status
+      const userDoc = await getDoc(doc(db, 'users', userCred.user.uid));
+
+      if (!userDoc.exists()) {
+        // Signed in via Firebase Auth but no Firestore record
+        await auth.signOut();
+        setStatusModal({ type: 'not_registered' });
+        return;
+      }
+
+      const userData = userDoc.data();
+
+      if (!userData.approved) {
+        // Account exists but admin hasn't approved yet
+        await auth.signOut();
+        setStatusModal({ type: 'pending', role: userData.role, name: userData.name });
+        return;
+      }
+
+      // All good — redirect
+      const role = userData.role;
+      if (role === 'admin') navigate('/admin');
+      else if (role === 'teacher') navigate('/teacher');
+      else navigate('/student');
+
     } catch (err) {
-      error(err.message, 4000);
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
+        // Check if email exists in Firestore but wrong password
+        setStatusModal({ type: 'invalid' });
+      } else {
+        error(err.message, 4000);
+      }
     }
   };
 
@@ -70,6 +111,19 @@ export default function Login() {
     try {
       await sendPasswordResetEmail(auth, email);
       success("Password reset email sent!", 3000);
+    } catch (err) {
+      error(err.message, 4000);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!email || !password) { info('Enter your email and password first.', 3000); return; }
+    try {
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      await sendEmailVerification(userCred.user);
+      await auth.signOut();
+      success('Verification email resent! Check your inbox.', 4000);
+      setShowResendVerify(false);
     } catch (err) {
       error(err.message, 4000);
     }
@@ -145,6 +199,80 @@ export default function Login() {
 
   return (
     <div className="login-wrapper">
+
+      {/* ── Status Modal ── */}
+      {statusModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+          <div style={{ background: 'white', borderRadius: '24px', padding: '36px 32px', maxWidth: '420px', width: '100%', textAlign: 'center', boxShadow: '0 24px 64px rgba(0,0,0,0.2)' }}>
+
+            {statusModal.type === 'pending' && (
+              <>
+                <div style={{ fontSize: '56px', marginBottom: '16px' }}>⏳</div>
+                <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>Approval Pending</h3>
+                <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.7', marginBottom: '8px' }}>
+                  Your <strong style={{ color: '#667eea' }}>{statusModal.role}</strong> account has been created and your email is verified.
+                </p>
+                <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.7', marginBottom: '24px' }}>
+                  An admin needs to approve your account before you can access the platform. Please check back later.
+                </p>
+                <div style={{ background: '#eff6ff', borderRadius: '12px', padding: '12px 16px', marginBottom: '24px', fontSize: '13px', color: '#1e40af' }}>
+                  📧 You'll be able to log in once an admin approves your request.
+                </div>
+                <button onClick={() => setStatusModal(null)}
+                  style={{ width: '100%', background: 'linear-gradient(135deg,#667eea,#764ba2)', borderRadius: '12px', padding: '13px', fontWeight: '700', fontSize: '15px', color: 'white', border: 'none', cursor: 'pointer' }}>
+                  OK, Got it
+                </button>
+              </>
+            )}
+
+            {statusModal.type === 'not_registered' && (
+              <>
+                <div style={{ fontSize: '56px', marginBottom: '16px' }}>🤔</div>
+                <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>Account Not Found</h3>
+                <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.7', marginBottom: '24px' }}>
+                  No account found for <strong>{email}</strong>. Would you like to create a new account?
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button onClick={() => { setStatusModal(null); navigate('/signup'); }}
+                    style={{ width: '100%', background: 'linear-gradient(135deg,#10b981,#059669)', borderRadius: '12px', padding: '13px', fontWeight: '700', fontSize: '15px', color: 'white', border: 'none', cursor: 'pointer' }}>
+                    ✨ Create Account
+                  </button>
+                  <button onClick={() => setStatusModal(null)}
+                    style={{ width: '100%', background: '#f1f5f9', borderRadius: '12px', padding: '12px', fontWeight: '600', fontSize: '14px', color: '#374151', border: 'none', cursor: 'pointer' }}>
+                    Try Again
+                  </button>
+                </div>
+              </>
+            )}
+
+            {statusModal.type === 'invalid' && (
+              <>
+                <div style={{ fontSize: '56px', marginBottom: '16px' }}>❌</div>
+                <h3 style={{ fontSize: '22px', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>Wrong Credentials</h3>
+                <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.7', marginBottom: '24px' }}>
+                  The email or password is incorrect. Double-check and try again, or reset your password.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button onClick={() => setStatusModal(null)}
+                    style={{ width: '100%', background: 'linear-gradient(135deg,#667eea,#764ba2)', borderRadius: '12px', padding: '13px', fontWeight: '700', fontSize: '15px', color: 'white', border: 'none', cursor: 'pointer' }}>
+                    Try Again
+                  </button>
+                  <button onClick={() => { setStatusModal(null); handleForgotPassword(); }}
+                    style={{ width: '100%', background: '#f1f5f9', borderRadius: '12px', padding: '12px', fontWeight: '600', fontSize: '14px', color: '#374151', border: 'none', cursor: 'pointer' }}>
+                    🔑 Reset Password
+                  </button>
+                  <button onClick={() => { setStatusModal(null); navigate('/signup'); }}
+                    style={{ background: 'transparent', color: '#94a3b8', border: 'none', cursor: 'pointer', fontSize: '13px', padding: '4px' }}>
+                    Don't have an account? Sign Up
+                  </button>
+                </div>
+              </>
+            )}
+
+          </div>
+        </div>
+      )}
+
       <div className="login-card">
         <h2 className="login-title">Cloud Quiz System</h2>
 
@@ -194,6 +322,16 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleLogin} className="login-form">
+          {showResendVerify && (
+            <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '12px', padding: '12px 16px', marginBottom: '16px', fontSize: '13px', color: '#c2410c' }}>
+              <p style={{ margin: '0 0 8px', fontWeight: '600' }}>📧 Email not verified</p>
+              <p style={{ margin: '0 0 10px', color: '#9a3412' }}>Check your inbox for the verification link, or resend it.</p>
+              <button type="button" onClick={handleResendVerification}
+                style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)', color: 'white', borderRadius: '8px', padding: '7px 16px', fontSize: '12px', fontWeight: '700', border: 'none', cursor: 'pointer' }}>
+                🔄 Resend verification email
+              </button>
+            </div>
+          )}
           <input
             type="email"
             placeholder="Email address"

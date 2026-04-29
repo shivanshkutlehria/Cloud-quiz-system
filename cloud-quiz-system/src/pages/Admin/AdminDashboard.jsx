@@ -187,7 +187,9 @@ export default function AdminDashboard() {
   const students = users.filter(u => u.role === 'student');
   const teachers = users.filter(u => u.role === 'teacher');
   const admins   = users.filter(u => u.role === 'admin');
-  const pending  = students.filter(u => !u.approved);
+  const pending  = users.filter(u => !u.approved && u.role !== 'admin'); // both students AND teachers
+  const pendingStudents = students.filter(u => !u.approved);
+  const pendingTeachers = teachers.filter(u => !u.approved);
   const flagged  = attempts.filter(a => a.suspiciousActivity);
   const avgScore = attempts.length
     ? (attempts.reduce((s, a) => s + (a.score / a.total) * 100, 0) / attempts.length).toFixed(1)
@@ -276,8 +278,21 @@ export default function AdminDashboard() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span style={{ fontSize: '28px' }}>⏳</span>
                     <div>
-                      <p style={{ fontWeight: '700', color: '#c2410c', margin: '0 0 2px', fontSize: '15px' }}>{pending.length} student{pending.length > 1 ? 's' : ''} awaiting approval</p>
-                      <p style={{ color: '#9a3412', fontSize: '12px', margin: 0 }}>{pending.slice(0, 3).map(u => u.email).join(', ')}{pending.length > 3 ? ` +${pending.length - 3} more` : ''}</p>
+                      <p style={{ fontWeight: '700', color: '#c2410c', margin: '0 0 4px', fontSize: '15px' }}>
+                        {pending.length} account{pending.length > 1 ? 's' : ''} awaiting approval
+                      </p>
+                      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                        {pendingStudents.length > 0 && (
+                          <span style={{ fontSize: '12px', background: '#dcfce7', color: '#15803d', padding: '2px 10px', borderRadius: '20px', fontWeight: '600' }}>
+                            🎓 {pendingStudents.length} student{pendingStudents.length > 1 ? 's' : ''}
+                          </span>
+                        )}
+                        {pendingTeachers.length > 0 && (
+                          <span style={{ fontSize: '12px', background: '#dbeafe', color: '#1d4ed8', padding: '2px 10px', borderRadius: '20px', fontWeight: '600' }}>
+                            👨‍🏫 {pendingTeachers.length} teacher{pendingTeachers.length > 1 ? 's' : ''}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <button onClick={() => setActiveNav('users')} style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)', borderRadius: '10px', padding: '10px 20px', fontWeight: '700', fontSize: '13px' }}>Review Now →</button>
