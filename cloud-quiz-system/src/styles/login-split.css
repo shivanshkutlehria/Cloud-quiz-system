@@ -353,36 +353,21 @@
   margin-bottom: 14px;
 }
 
-/* Input field with icon */
+/* Input field */
 .ls-field {
   position: relative;
   display: flex;
   align-items: center;
 }
 
+/* hide icons completely */
 .ls-field-icon {
-  position: absolute;
-  left: 16px;
-  width: 18px;
-  height: 18px;
-  pointer-events: none;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #475569;
-  flex-shrink: 0;
-}
-
-.ls-field-icon svg {
-  width: 18px;
-  height: 18px;
-  display: block;
+  display: none;
 }
 
 .ls-input {
   width: 100%;
-  padding: 13px 16px 13px 48px;
+  padding: 13px 16px;
   background: #1a1f2e;
   border: 1.5px solid #1e293b;
   border-radius: 12px;
