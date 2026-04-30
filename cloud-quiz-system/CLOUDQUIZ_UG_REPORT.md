@@ -217,7 +217,7 @@ The frontend is built with React.js and Vite, deployed on Vercel, while the back
 
 The rapid advancement of Artificial Intelligence and cloud computing technologies has opened new possibilities in the field of educational technology. Traditional Learning Management Systems (LMS) such as Moodle, Google Classroom, and Blackboard provide basic quiz and content management features but lack intelligent automation, real-time AI assistance, and integrated exam integrity monitoring.
 
-Educational institutions face several recurring challenges: teachers spend significant time manually creating quiz questions, exam integrity is difficult to maintain in online settings, and students receive limited personalised feedback after assessments. These gaps motivated the development of CloudQuiz — a system that integrates AI at every stage of the assessment lifecycle.
+Educational institutions face several recurring challenges: teachers spend significant time manually creating quiz questions, exam integrity is difficult to maintain in online settings, and students receive limited personalised feedback after assessments. These gaps motivated the development of CloudQuiz ï¿½ a system that integrates AI at every stage of the assessment lifecycle.
 
 The proliferation of large language models (LLMs) such as Meta's LLaMA series, combined with accessible APIs like Groq, has made it feasible to build production-grade AI features within student projects. Similarly, TensorFlow.js enables in-browser machine learning, making real-time camera-based proctoring possible without server-side video processing.
 
@@ -235,15 +235,15 @@ The proliferation of large language models (LLMs) such as Meta's LLaMA series, c
 
 The following problems were identified through analysis of existing systems:
 
-1. **Manual quiz creation is time-consuming** — A teacher creating a 20-question quiz manually may spend 2-3 hours. AI generation reduces this to under 30 seconds.
+1. **Manual quiz creation is time-consuming** ï¿½ A teacher creating a 20-question quiz manually may spend 2-3 hours. AI generation reduces this to under 30 seconds.
 
-2. **No intelligent syllabus management** — Existing systems require teachers to manually type content. There is no support for uploading images or documents of syllabi.
+2. **No intelligent syllabus management** ï¿½ Existing systems require teachers to manually type content. There is no support for uploading images or documents of syllabi.
 
-3. **Weak exam integrity** — Most free LMS platforms have no proctoring. Commercial proctoring tools (ProctorU, Examity) cost $10-20 per exam per student.
+3. **Weak exam integrity** ï¿½ Most free LMS platforms have no proctoring. Commercial proctoring tools (ProctorU, Examity) cost $10-20 per exam per student.
 
-4. **No post-quiz AI assistance** — Students receive scores but no intelligent explanation of why their answers were wrong.
+4. **No post-quiz AI assistance** ï¿½ Students receive scores but no intelligent explanation of why their answers were wrong.
 
-5. **Fragmented tools** — Teachers use separate tools for syllabus management, quiz creation, and student communication.
+5. **Fragmented tools** ï¿½ Teachers use separate tools for syllabus management, quiz creation, and student communication.
 
 ## 1.4 Task Identification
 
@@ -320,7 +320,7 @@ Heilman and Smith (2010) proposed an overgenerate-and-rank approach for question
 
 ## 2.3 Problem Definition, Goals and Objectives
 
-**Problem Definition:** Existing LMS platforms do not provide integrated AI-powered quiz generation from multi-format syllabus content, real-time browser-based exam proctoring, or personalised AI tutoring — creating a fragmented and inefficient assessment workflow for educational institutions.
+**Problem Definition:** Existing LMS platforms do not provide integrated AI-powered quiz generation from multi-format syllabus content, real-time browser-based exam proctoring, or personalised AI tutoring ï¿½ creating a fragmented and inefficient assessment workflow for educational institutions.
 
 **Goals:**
 1. Develop a unified platform that covers the complete assessment lifecycle from syllabus upload to post-quiz learning
@@ -364,7 +364,7 @@ Three initial concepts were generated for the system architecture:
 | Cost | Free | Paid server | Free tier available |
 | **Score** | **2/5** | **3/5** | **5/5** |
 
-**Selected Design: Concept C — Decoupled Full-Stack Architecture**
+**Selected Design: Concept C ï¿½ Decoupled Full-Stack Architecture**
 
 Concept C was selected because it provides the best security (API keys never exposed to the browser), enables full AI integration via the backend, and allows independent scaling of frontend and backend. Both Vercel and Render offer free tiers suitable for academic deployment.
 
@@ -377,10 +377,10 @@ The system must be deployable at zero cost using free tiers of Vercel, Render, F
 As a cloud-based system, the environmental footprint is managed by the cloud providers. The system minimises unnecessary API calls through rate limiting and caching strategies.
 
 ### 3.3.3 Health and Safety Constraints
-The camera proctoring feature requires explicit user consent and camera permission. The system does not store video recordings — only metadata about detected events is saved to Firestore.
+The camera proctoring feature requires explicit user consent and camera permission. The system does not store video recordings ï¿½ only metadata about detected events is saved to Firestore.
 
 ### 3.3.4 Ethical Constraints
-Student monitoring data is used solely for academic integrity purposes. The system does not use facial recognition for identity verification — only face presence/count detection. All data is stored securely in Firebase with authentication-gated access rules.
+Student monitoring data is used solely for academic integrity purposes. The system does not use facial recognition for identity verification ï¿½ only face presence/count detection. All data is stored securely in Firebase with authentication-gated access rules.
 
 ### 3.3.5 Social Constraints
 The system must be accessible to students with varying internet speeds. The frontend is optimised with lazy loading and the TensorFlow.js models are loaded asynchronously to avoid blocking the quiz interface.
@@ -394,33 +394,33 @@ All API keys and credentials are stored as environment variables and never commi
 
 ```
 +-------------------------------------------------------------+
-¦                    FRONTEND (Vercel)                         ¦
-¦         React.js 18 + Vite + TensorFlow.js (BlazeFace)      ¦
-¦                                                              ¦
-¦  +----------+  +----------+  +----------+  +----------+   ¦
-¦  ¦  Admin   ¦  ¦ Teacher  ¦  ¦ Student  ¦  ¦  Auth    ¦   ¦
-¦  ¦Dashboard ¦  ¦Dashboard ¦  ¦Dashboard ¦  ¦  Pages   ¦   ¦
-¦  +----------+  +----------+  +----------+  +----------+   ¦
+ï¿½                    FRONTEND (Vercel)                         ï¿½
+ï¿½         React.js 18 + Vite + TensorFlow.js (BlazeFace)      ï¿½
+ï¿½                                                              ï¿½
+ï¿½  +----------+  +----------+  +----------+  +----------+   ï¿½
+ï¿½  ï¿½  Admin   ï¿½  ï¿½ Teacher  ï¿½  ï¿½ Student  ï¿½  ï¿½  Auth    ï¿½   ï¿½
+ï¿½  ï¿½Dashboard ï¿½  ï¿½Dashboard ï¿½  ï¿½Dashboard ï¿½  ï¿½  Pages   ï¿½   ï¿½
+ï¿½  +----------+  +----------+  +----------+  +----------+   ï¿½
 +-------------------------------------------------------------+
-                           ¦ HTTPS REST API
+                           ï¿½ HTTPS REST API
 +--------------------------?----------------------------------+
-¦                    BACKEND (Render)                          ¦
-¦                  Node.js + Express.js                        ¦
-¦                                                              ¦
-¦  /api/ai          /api/syllabus       /api/subjects          ¦
-¦  (Rate limited)   (File parsing)      (CRUD)                 ¦
-¦       ¦                ¦                   ¦                 ¦
-¦       ?                ?                   ?                 ¦
-¦  +---------+    +--------------+    +--------------+       ¦
-¦  ¦ Groq AI ¦    ¦ pdf-parse    ¦    ¦ Firebase     ¦       ¦
-¦  ¦ LLaMA   ¦    ¦ JSZip        ¦    ¦ Admin SDK    ¦       ¦
-¦  ¦ 3.3-70B ¦    ¦ Vision Model ¦    ¦              ¦       ¦
-¦  +---------+    +--------------+    +--------------+       ¦
+ï¿½                    BACKEND (Render)                          ï¿½
+ï¿½                  Node.js + Express.js                        ï¿½
+ï¿½                                                              ï¿½
+ï¿½  /api/ai          /api/syllabus       /api/subjects          ï¿½
+ï¿½  (Rate limited)   (File parsing)      (CRUD)                 ï¿½
+ï¿½       ï¿½                ï¿½                   ï¿½                 ï¿½
+ï¿½       ?                ?                   ?                 ï¿½
+ï¿½  +---------+    +--------------+    +--------------+       ï¿½
+ï¿½  ï¿½ Groq AI ï¿½    ï¿½ pdf-parse    ï¿½    ï¿½ Firebase     ï¿½       ï¿½
+ï¿½  ï¿½ LLaMA   ï¿½    ï¿½ JSZip        ï¿½    ï¿½ Admin SDK    ï¿½       ï¿½
+ï¿½  ï¿½ 3.3-70B ï¿½    ï¿½ Vision Model ï¿½    ï¿½              ï¿½       ï¿½
+ï¿½  +---------+    +--------------+    +--------------+       ï¿½
 +-------------------------------------------------------------+
-                           ¦
+                           ï¿½
 +--------------------------?----------------------------------+
-¦                    FIREBASE                                  ¦
-¦         Firestore (Database) + Authentication                ¦
+ï¿½                    FIREBASE                                  ï¿½
+ï¿½         Firestore (Database) + Authentication                ï¿½
 +-------------------------------------------------------------+
 ```
 
@@ -430,43 +430,43 @@ All API keys and credentials are stored as environment variables and never commi
 
 ```
 START
-  ¦
+  ï¿½
   ?
 Teacher selects subject / uploads syllabus
-  ¦
+  ï¿½
   ?
 Choose generation mode:
   +-- Full Syllabus
   +-- Specific Unit
   +-- Custom Topic
-  ¦
+  ï¿½
   ?
 SyllabusUploader component processes input:
   +-- Text ? direct
   +-- Image ? Groq Vision (LLaMA 4 Scout) ? text
   +-- PDF/DOCX ? pdf-parse / JSZip ? text
-  ¦
+  ï¿½
   ?
 POST /api/ai/generate-quiz
-  ¦
+  ï¿½
   ?
 Groq LLaMA 3.3-70B generates N MCQs as JSON
-  ¦
+  ï¿½
   ?
 Questions saved as ai_drafts (status: pending_review)
-  ¦
+  ï¿½
   ?
 Teacher reviews each question:
   +-- Edit ? modify question/options/answer
   +-- Publish ? move to live questions collection
   +-- Reject ? mark as rejected
-  ¦
+  ï¿½
   ?
 POST /api/ai/publish-all (batch Firestore write)
-  ¦
+  ï¿½
   ?
 Questions available to students
-  ¦
+  ï¿½
   ?
 END
 ```
